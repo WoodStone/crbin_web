@@ -38,6 +38,7 @@ table {
     max-width: 800px;
     font-family: monospace;
     padding-top: 50px;
+    padding-bottom: 50px;
 }
 
 th {
@@ -46,6 +47,15 @@ th {
 
 th, tr {
     color: #626977;
+}
+
+tfoot > tr {
+    color: #af9c8d;
+    cursor: pointer;
+}
+
+tfoot > tr:hover {
+    color: #fff;
 }
 
 a {

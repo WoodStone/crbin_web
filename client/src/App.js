@@ -15,8 +15,12 @@ class App extends Component {
   dublicateBin = () => history.push("");
   rawBin = () => history.push("raw" + history.location.pathname);
   fetchBin = (id) => axios.get("/bin/" + id).then(r => this.updateCode(r.data.data));
-  fetchBins = (page) => axios.get("/bin?pageSize=20").then(r => this.setState({bins: r.data}));
   updateCode = (code) => this.setState({code: code});
+  fetchBins = (page) => {
+    axios.get("/bin?pageSize=20&page="+page).then(r => {
+      page === 0 ? this.setState({bins: r.data}) : this.setState({bins: [...this.state.bins, ...r.data]})
+    })
+  }
 
   render() {
     return (
@@ -54,7 +58,7 @@ class App extends Component {
 class RawCodeView extends Component {
 
   componentWillMount() {
-    if (this.props.code.length == 0) {
+    if (this.props.code.length === 0) {
       this.props.fetchBin(this.props.match.params.id);
     }
   }
@@ -72,7 +76,7 @@ const EditView = ({code, onCodeChange}) => (
     value={code}
     onKeyDown={(event) => {
       // Tab support
-      if (event.keyCode == 9) {
+      if (event.keyCode === 9) {
         event.preventDefault();
         var target = event.target;
         var val = target.value;
@@ -103,9 +107,10 @@ class CodeView extends Component {
 }
 
 class BrowseView extends Component {
+  page = 1;
 
   componentWillMount() {
-    this.props.fetchBins();
+    this.props.fetchBins(this.page++);
   }
 
   render() {
@@ -117,6 +122,11 @@ class BrowseView extends Component {
         <tbody>
           {this.props.bins.map(bin => <Bin key={bin.id} bin={bin}/>)}
         </tbody>
+        <tfoot>
+          <tr>
+            <td colSpan={3} onClick={() => this.props.fetchBins(this.page++)}>Show more...</td>
+          </tr>
+        </tfoot>
       </table>
     );
   }
