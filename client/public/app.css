@@ -32,14 +32,38 @@ textarea {
     word-wrap: break-word;
     box-sizing: border-box;
 }
+
+table {
+    width: '100%';
+    max-width: 800px;
+    font-family: monospace;
+    padding-top: 50px;
+}
+
+th {
+    text-align: left;
+}
+
+th, tr {
+    color: #626977;
+}
+
+a {
+    color: #626977;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #fff;
+}
   
 .feather {
-    stroke: blue;
+    stroke: #af9c8d;
     cursor: pointer;
 }
 
 .feather:hover {
-    stroke: red;
+    stroke: #fff;
 }
 
 .button {
@@ -57,6 +81,7 @@ textarea {
     padding: 20px;
     display: flex;
     flex-grow: 1;
+    justify-content: center;
 }
   
 #menu {

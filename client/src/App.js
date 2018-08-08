@@ -2,19 +2,20 @@ import axios from 'axios';
 import createHistory from 'history/createBrowserHistory';
 import React, { Component } from 'react';
 import ReactSVG from 'react-svg';
-import { Route, Router } from 'react-router-dom';
+import { Route, Router, Link } from 'react-router-dom';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { atomOneDark } from 'react-syntax-highlighter/styles/hljs';
 const history = createHistory();
 
 class App extends Component {
-  state = {code: ""};
+  state = {code: "", bins: []};
 
   newBin = () => { this.updateCode(""); history.push(""); }
   saveBin = () => axios.post("/bin", {data: this.state.code, src: "web"}).then(r => history.push(r.data.id));
   dublicateBin = () => history.push("");
   rawBin = () => history.push("raw" + history.location.pathname);
   fetchBin = (id) => axios.get("/bin/" + id).then(r => this.updateCode(r.data.data));
+  fetchBins = (page) => axios.get("/bin?pageSize=20").then(r => this.setState({bins: r.data}));
   updateCode = (code) => this.setState({code: code});
 
   render() {
@@ -38,6 +39,10 @@ class App extends Component {
 
           <Route path="/raw/:id([a-f\d]{14,16})" render={(props) => (
             <RawCodeView {...props} code={this.state.code} fetchBin={this.fetchBin.bind(this)}/>
+          )}/>
+
+          <Route path="/browse" render={(props) => (
+            <BrowseView {...props} fetchBins={this.fetchBins} bins={this.state.bins}/>
           )}/>
 
         </div>
@@ -96,5 +101,34 @@ class CodeView extends Component {
     );
   }
 }
+
+class BrowseView extends Component {
+
+  componentWillMount() {
+    this.props.fetchBins();
+  }
+
+  render() {
+    return (
+      <table style={{width: "100%"}}>
+        <thead>
+          <tr><th>ID</th><th>Timestamp</th><th>Source</th></tr>
+        </thead>
+        <tbody>
+          {this.props.bins.map(bin => <Bin key={bin.id} bin={bin}/>)}
+        </tbody>
+      </table>
+    );
+  }
+
+}
+
+const Bin = ({bin}) => (
+  <tr>
+    <td><Link to={"/" + bin.id}>{bin.id}</Link></td>
+    <td>{bin.timestamp}</td>
+    <td>{bin.src}</td>
+  </tr>
+);
 
 export default App;
