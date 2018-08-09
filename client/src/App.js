@@ -115,7 +115,7 @@ class BrowseView extends Component {
 
   render() {
     return (
-      <table style={{width: "100%"}}>
+      <table>
         <thead>
           <tr><th>ID</th><th>Timestamp</th><th>Source</th></tr>
         </thead>

@@ -34,7 +34,7 @@ textarea {
 }
 
 table {
-    width: '100%';
+    width: 100%;
     max-width: 800px;
     font-family: monospace;
     padding-top: 50px;
