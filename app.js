@@ -12,8 +12,13 @@ if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, 'client/build')));
 
   // Pipe requests to api server
+  app.use('/bin/:id', function(req, res) {
+    var url = apiUrl + '/' + req.params.id;
+    req.pipe(request(url)).pipe(res);
+  });
+  
   app.use('/bin', function(req, res) {
-    var url = req.url == '/' ? apiUrl : apiUrl + req.url;
+    var url = apiUrl + req.url.substr(1)
     req.pipe(request(url)).pipe(res);
   });
 
