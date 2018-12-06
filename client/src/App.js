@@ -11,7 +11,7 @@ class App extends Component {
   state = {code: "", bins: []};
 
   newBin = () => { this.updateCode(""); history.push(""); }
-  saveBin = () => axios.post("/bin", {data: this.state.code, src: "web"}).then(r => history.push(r.data.id));
+  saveBin = () => axios.post("/bin", {data: this.state.code, src: "web"}).then(r => history.push(r.data.uuid));
   dublicateBin = () => history.push("");
   rawBin = () => history.push("raw" + history.location.pathname);
   fetchBin = (id) => axios.get("/bin/" + id).then(r => this.updateCode(r.data.data));
@@ -37,11 +37,11 @@ class App extends Component {
             <EditView {...props} onCodeChange={this.updateCode} code={this.state.code} />
           )}/>
 
-          <Route path="/:id([a-f\d]{14,16})" render={(props) => (
+          <Route path="/:id([a-f\d-]{36})" render={(props) => (
             <CodeView {...props} onCodeChange={this.updateCode} code={this.state.code} fetchBin={this.fetchBin.bind(this)} />
           )} />
 
-          <Route path="/raw/:id([a-f\d]{14,16})" render={(props) => (
+          <Route path="/raw/:id([a-f\d]{36})" render={(props) => (
             <RawCodeView {...props} code={this.state.code} fetchBin={this.fetchBin.bind(this)}/>
           )}/>
 
@@ -111,6 +111,7 @@ class BrowseView extends Component {
 
   componentWillMount() {
     this.props.fetchBins(this.page++);
+    console.log(this.page)
   }
 
   render() {
@@ -120,7 +121,7 @@ class BrowseView extends Component {
           <tr><th>ID</th><th>Timestamp</th><th>Source</th></tr>
         </thead>
         <tbody>
-          {this.props.bins.map(bin => <Bin key={bin.id} bin={bin}/>)}
+          {this.props.bins.map(bin => <Bin key={bin.uuid} bin={bin}/>)}
         </tbody>
         <tfoot>
           <tr>
@@ -135,7 +136,7 @@ class BrowseView extends Component {
 
 const Bin = ({bin}) => (
   <tr>
-    <td><Link to={"/" + bin.id}>{bin.id}</Link></td>
+    <td><Link to={"/" + bin.uuid}>{bin.uuid}</Link></td>
     <td>{bin.timestamp}</td>
     <td>{bin.src}</td>
   </tr>
